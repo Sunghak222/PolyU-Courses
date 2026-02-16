@@ -37,9 +37,11 @@ This project was developed as part of a Computer Vision assignment, with a focus
 The input image is resized to a bounded grid (≤ 100×100).  
 All subsequent computations operate on this normalized grid to ensure predictable time complexity:
 
+$$
 \[
 O(H \times W)
 \]
+$$
 
 This prevents computation from scaling with raw image resolution.
 
