@@ -38,9 +38,7 @@ The input image is resized to a bounded grid (≤ 100×100).
 All subsequent computations operate on this normalized grid to ensure predictable time complexity:
 
 $$
-\[
 O(H \times W)
-\]
 $$
 
 This prevents computation from scaling with raw image resolution.
@@ -53,9 +51,9 @@ Instead of applying global color quantization, Task 3 performs region-based colo
 
 Color similarity is measured using Manhattan distance:
 
-\[
+$$
 D = |R_1 - R_2| + |G_1 - G_2| + |B_1 - B_2|
-\]
+$$
 
 Pixels within a threshold \( t \) are grouped into the same brick region.
 
@@ -82,11 +80,11 @@ This deterministic greedy strategy:
 
 Time complexity remains approximately:
 
-\[
+$$
 O(H \times W \times S)
-\]
+$$
 
-where \( S \) is the number of candidate brick shapes.
+where $$S$$ is the number of candidate brick shapes.
 
 ---
 
