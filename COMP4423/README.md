@@ -30,77 +30,115 @@ This project was developed as part of a Computer Vision assignment, with a focus
 
 ---
 
-## 🏗 Pipeline Overview
+## 🧠 Core Algorithmic Components
 
-The system follows a structured pipeline:
+### 1. Grid Discretization
 
-1. **Image Preprocessing**
-   - Resize input to bounded grid size (≤ 100x100)
-   - Optional grayscale conversion (Task 2)
+The input image is resized to a bounded grid (≤ 100×100).  
+All subsequent computations operate on this normalized grid to ensure predictable time complexity:
 
-2. **Color Processing**
-   - Task 2: Explicit 3-level quantization (black, gray, white)
-   - Task 3: Region-based color merging during brick placement
+\[
+O(H \times W)
+\]
 
-3. **Brick Placement**
-   - Greedy tiling strategy
-   - Largest brick-first placement
-   - Color similarity check using Manhattan distance:
-
-     ```
-     D = |R1 - R2| + |G1 - G2| + |B1 - B2|
-     ```
-
-4. **Rendering**
-   - Brick-level boundary rendering
-   - Stud drawing with brightness adjustment
-   - Shadow effect using layered ellipses
-
-5. **Brick Summary**
-   - Total brick count
-   - Each Brick count
+This prevents computation from scaling with raw image resolution.
 
 ---
 
-## ⚙️ Algorithm Design
+### 2. Adaptive Color Processing
 
-Instead of performing global optimization, the project adopts a deterministic greedy strategy to ensure stable execution time and suitability for real-time deployment.
+Instead of applying global color quantization, Task 3 performs region-based color merging during brick placement.
 
-Color simplification is handled adaptively:
-- Large bricks form in visually consistent regions
-- Detailed areas naturally produce smaller bricks
+Color similarity is measured using Manhattan distance:
 
-This spatially aware merging improves structural realism compared to global color quantization.
+\[
+D = |R_1 - R_2| + |G_1 - G_2| + |B_1 - B_2|
+\]
 
----
+Pixels within a threshold \( t \) are grouped into the same brick region.
 
-## 🎥 Real-Time Mode
-
-The project supports live camera input using OpenCV.
-
-- Frames are resized before processing
-- Brick placement operates on a bounded grid
-- Execution time remains stable per frame
+This allows spatially aware color smoothing rather than uniform global reduction.
 
 ---
 
-## 🧠 Design Decisions
+### 3. Greedy Tiling Strategy
 
-- Region-based color merging instead of global quantization
-- Greedy tiling instead of BFS/backtracking
-- Brick-level gap rendering for realistic boundaries
-- Simplified shadow rendering for real-time performance
+Brick placement is modeled as a constrained covering problem.
+
+At each unoccupied grid position:
+
+- Attempt largest brick sizes first
+- Validate boundary constraints
+- Validate color homogeneity constraint
+- Mark region as occupied
+
+This deterministic greedy strategy:
+
+- Avoids exponential global search
+- Maintains stable execution time
+- Produces near-optimal brick distributions in practice
+
+Time complexity remains approximately:
+
+\[
+O(H \times W \times S)
+\]
+
+where \( S \) is the number of candidate brick shapes.
 
 ---
 
-## 📦 Requirements
+### 4. Rendering with Structural Awareness
 
-- Python 3.9+
-- OpenCV
+Rendering operates at brick-level abstraction:
+
+- Brick-level boundary separation
+- Per-unit stud generation
+- Shadow approximation using layered ellipses
+
+Large bricks visually appear unified, rather than segmented pixel blocks.
+
+---
+
+## 📊 Brick Summary Analytics
+
+During tiling, the system records:
+
+- Total brick count
+- Distribution per brick type
+
+This provides structural metrics for evaluating compression vs detail preservation.
+
+---
+
+## 🎥 Real-Time Deployment
+
+The pipeline supports live camera input.
+
+Key design for stability:
+
+- Bounded grid normalization
+- Deterministic traversal (no backtracking)
+- Heuristic tiling instead of global optimization
+
+This ensures consistent per-frame processing time.
+
+---
+
+## 📈 Design Trade-Offs
+
+- Region-based merging vs global quantization
+- Greedy heuristic vs exhaustive search
+- Visual realism vs computational efficiency
+- Parameter sensitivity (threshold tuning)
+
+---
+
+## 🛠 Tech Stack
+
+- Python
 - NumPy
 - Pillow
+- OpenCV
 
-Install dependencies:
-
-```bash
-pip install opencv-python numpy pillow
+---
